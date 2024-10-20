@@ -3,16 +3,21 @@ from PIL import Image, ImageTk
 from copy import deepcopy
 import json
 import os
+import pathlib
 
-from chess_game import ChessBoard
+from .chess_game import ChessBoard, save_game
+
 
 class ChessGUI:
     def __init__(self, root):
         self.root = root
         self.root.title("Chess Game")
-        
+
+        # Get screen resolution
+        sq_size = (min(root.winfo_screenwidth(), root.winfo_screenheight()) - 20)  // 9
+
         # Board dimensions
-        self.SQUARE_SIZE = 80
+        self.SQUARE_SIZE = sq_size
         self.BOARD_SIZE = self.SQUARE_SIZE * 8
         
         # Colors for the board squares
@@ -85,17 +90,25 @@ class ChessGUI:
             'N': 'knight',
             'P': 'pawn'
         }
-        
+
+        current_dir = pathlib.Path(__file__).parent.resolve()
+
         for color in ['white', 'black']:
             color_code = 'w' if color == 'white' else 'b'
             fill_color = '#FFFFFF' if color == 'white' else '#000000'
             outline_color = '#000000' if color == 'white' else '#FFFFFF'
             
             for symbol, name in piece_symbols.items():
-                img = Image.new('RGBA', (self.SQUARE_SIZE - 20, self.SQUARE_SIZE - 20), fill_color)
-                # Add piece symbol text
-                piece_key = color + symbol
-                self.piece_images[piece_key] = ImageTk.PhotoImage(img)
+                # if symbol == 'P':
+                    img_path = os.path.join(current_dir, f"pieces/{color_code}{symbol}.png")
+                    img = Image.open(img_path)
+                    img = img.resize((self.SQUARE_SIZE - 10, self.SQUARE_SIZE - 10))
+                    self.piece_images[color + symbol] = ImageTk.PhotoImage(img)
+                # else:
+                #     img = Image.new('RGBA', (self.SQUARE_SIZE - 20, self.SQUARE_SIZE - 20), fill_color)
+                #     # Add piece symbol text
+                #     piece_key = color + symbol
+                #     self.piece_images[piece_key] = ImageTk.PhotoImage(img)
 
     def draw_board(self):
         self.canvas.delete("squares")
@@ -151,14 +164,14 @@ class ChessGUI:
                         tags="pieces"
                     )
                     # Add piece symbol text
-                    symbol_color = '#000000' if piece.color == 'white' else '#FFFFFF'
-                    self.canvas.create_text(
-                        x, y,
-                        text=piece.symbol,
-                        fill=symbol_color,
-                        font=('Arial', 24, 'bold'),
-                        tags="pieces"
-                    )
+                    # symbol_color = '#000000' if piece.color == 'white' else '#FFFFFF'
+                    # self.canvas.create_text(
+                    #     x, y,
+                    #     text=piece.symbol,
+                    #     fill=symbol_color,
+                    #     font=('Arial', 24, 'bold'),
+                    #     tags="pieces"
+                    # )
 
     def highlight_square(self, row, col, color):
         x1 = col * self.SQUARE_SIZE
@@ -260,6 +273,11 @@ class ChessGUI:
 
 def play_chess_gui():
     root = tk.Tk()
+    root.resizable(False, False)
+    icon_file = 'chess.ico'
+    current_dir = pathlib.Path(__file__).parent.resolve()
+    icon_path = os.path.join(current_dir, icon_file)
+    root.iconbitmap(default=icon_path)
     gui = ChessGUI(root)
     root.mainloop()
 

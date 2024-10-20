@@ -1,0 +1,13 @@
+include src/chess/chess.ico
+include src/chess/pieces/bB.png
+include src/chess/pieces/bK.png
+include src/chess/pieces/bN.png
+include src/chess/pieces/bP.png
+include src/chess/pieces/bQ.png
+include src/chess/pieces/bR.png
+include src/chess/pieces/wB.png
+include src/chess/pieces/wK.png
+include src/chess/pieces/wN.png
+include src/chess/pieces/wP.png
+include src/chess/pieces/wQ.png
+include src/chess/pieces/wR.png
